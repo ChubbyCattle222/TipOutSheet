@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: 'Arial', sans-serif;
-      background: #f9f9f9;
+      background: #f1f1f1;
       color: #333;
       margin: 0;
       padding: 0;
@@ -49,12 +49,13 @@
     }
 
     .signature-box {
-      border: 1px dashed #ccc;
+      border: 2px dashed #ccc;
       height: 200px;
-      margin-bottom: 20px;
-      position: relative;
-      cursor: pointer;
+      margin-bottom: 10px;
       background-color: #f9f9f9;
+      position: relative;
+      overflow: hidden;
+      touch-action: none;
     }
 
     .note {
@@ -66,18 +67,18 @@
     canvas {
       width: 100%;
       height: 100%;
-      border-radius: 5px;
+      display: block;
     }
 
     .clear-btn {
       display: block;
       margin-top: 10px;
-      text-align: center;
       background-color: #ff6666;
       color: white;
       padding: 10px;
       border: none;
       cursor: pointer;
+      text-align: center;
       border-radius: 4px;
     }
 
@@ -98,8 +99,78 @@
 <div class="container">
   <h1>Chubby Cattle Tip Out</h1>
 
-  <!-- Form fields -->
+  <!-- Form Fields -->
+  <label>Date (xx/xx/xxxx)</label>
+  <input type="text" id="date">
 
+  <label>Server Name</label>
+  <input type="text" id="server-name">
+
+  <label>Section</label>
+  <input type="text" id="section">
+
+  <label>Total Guests #</label>
+  <input type="number" id="total-guests">
+
+  <label>Total Net Sales</label>
+  <input type="number" id="total-net-sales" oninput="calculateTipPercentage()">
+
+  <label>Total CC Tips</label>
+  <input type="number" id="total-cc-tips" oninput="calculateTotalTips()">
+
+  <label>Total Cash Tips</label>
+  <input type="number" id="total-cash-tips" oninput="calculateTotalTips()">
+
+  <label>Total Tips</label>
+  <input type="number" id="total-tips" readonly>
+
+  <label>Tip Percentage from Net Sales</label>
+  <input type="text" id="tip-percentage" readonly>
+
+  <label>NET FOOD SALES</label>
+  <input type="number" id="net-food-sales" oninput="calculateFoodTipOuts()">
+
+  <label>Total Tip Out 10.5% of NET FOOD SALES</label>
+  <input type="text" id="total-tip-out" readonly>
+
+  <label>Hosts 1.2%</label>
+  <input type="text" id="hosts-tip-out" readonly>
+
+  <label>Runners 2.2%</label>
+  <input type="text" id="runners-tip-out" readonly>
+
+  <label>Bussers 2.2%</label>
+  <input type="text" id="bussers-tip-out" readonly>
+
+  <label>Barista 0.9%</label>
+  <input type="text" id="barista-tip-out" readonly>
+
+  <label>BOH 4%</label>
+  <input type="text" id="boh-tip-out" readonly>
+
+  <label>Total Tip Out 0.5% to Captain</label>
+  <select id="captain-tip-out" onchange="calculateCaptainTipOut()">
+    <option value="No">No</option>
+    <option value="Yes">Yes</option>
+  </select>
+
+  <label>Captain Tip Out</label>
+  <input type="text" id="captain-tip-out-amount" readonly>
+
+  <label>Captain's Name</label>
+  <input type="text" id="captains-name">
+
+  <label>NET BEVERAGE SALES</label>
+  <input type="number" id="net-beverage-sales" oninput="calculateBartenderTipOut()">
+
+  <label>Bartender 10% of Net Beverage Sales</label>
+  <input type="text" id="bartender-tip-out" readonly>
+
+  <label>Server Actual Tip Amount</label>
+  <input type="text" id="server-actual-tip-amount" readonly>
+  <small>(Total Tips - Net Food & Net Beverage Tip out)</small>
+
+  <!-- Signature Areas -->
   <label>Server Signature (Tap to sign)</label>
   <div class="signature-box">
     <canvas id="server-signature-canvas"></canvas>
@@ -133,6 +204,7 @@
     }
 
     function startDrawing(e) {
+      e.preventDefault();
       drawing = true;
       ctx.beginPath();
       ctx.moveTo(getX(e), getY(e));
@@ -178,7 +250,7 @@
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
 
-  // Initialize canvases for signatures
+  // Initialize signature canvases
   initSignatureCanvas('server-signature-canvas');
   initSignatureCanvas('manager-signature-canvas');
 </script>
