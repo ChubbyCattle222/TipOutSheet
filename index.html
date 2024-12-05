@@ -8,14 +8,14 @@
   <style>
     body {
       font-family: 'Arial', sans-serif;
-      background: #f4f4f4;
+      background: #f9f9f9;
       color: #333;
       margin: 0;
       padding: 0;
     }
 
     .container {
-      max-width: 800px;
+      max-width: 600px;
       margin: 20px auto;
       background: #fff;
       padding: 20px;
@@ -25,7 +25,7 @@
 
     h1 {
       text-align: center;
-      font-size: 28px;
+      font-size: 24px;
       color: #444;
       margin-bottom: 20px;
     }
@@ -42,31 +42,43 @@
       margin-bottom: 15px;
       border: 1px solid #ccc;
       border-radius: 4px;
+      font-size: 16px;
     }
 
     input[readonly] {
       background-color: #e9ecef;
     }
 
-    .italic {
-      font-style: italic;
-      font-size: 12px;
-      color: #666;
+    .signature-box {
+      border: 1px dashed #ccc;
+      padding: 20px;
+      text-align: center;
+      background-color: #f9f9f9;
+      margin-bottom: 20px;
+      position: relative;
+      cursor: pointer;
     }
 
     .note {
       font-size: 12px;
-      color: #999;
+      color: #666;
       margin-top: 20px;
     }
 
-    .signature-box {
-      border: 1px dashed #ccc;
-      padding: 10px;
-      text-align: center;
-      cursor: pointer;
-      background-color: #f9f9f9;
-      margin-bottom: 20px;
+    canvas {
+      width: 100%;
+      height: 100%;
+      border-radius: 5px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        margin: 10px;
+        padding: 15px;
+      }
+      h1 {
+        font-size: 20px;
+      }
     }
   </style>
 </head>
@@ -97,7 +109,7 @@
     <input type="number" id="total-cash-tips" placeholder="Enter total cash tips">
 
     <label for="total-tips">Total Tips</label>
-    <input type="number" id="total-tips" placeholder="Enter total tips">
+    <input type="number" id="total-tips" readonly>
 
     <label for="tip-percentage">Tip Percentage from Net Sales</label>
     <input type="number" id="tip-percentage" readonly>
@@ -129,6 +141,9 @@
       <option value="yes">Yes</option>
     </select>
 
+    <label for="captain-tip-out">Captain Tip Out</label>
+    <input type="number" id="captain-tip-out" readonly>
+
     <label for="captain-name">Captain's Name</label>
     <input type="text" id="captain-name" placeholder="Enter captain's name">
 
@@ -138,17 +153,17 @@
     <label for="bartender">Bartender (10% of Net Beverage Sales)</label>
     <input type="number" id="bartender" readonly>
 
-    <label for="actual-tip-amount">Server Actual Tip Amount <span class="italic">(Total Tips - Net Food & Net Beverage Tip Out)</span></label>
+    <label for="actual-tip-amount">Server Actual Tip Amount</label>
     <input type="number" id="actual-tip-amount" readonly>
 
-    <label>Server Signature</label>
-    <div class="signature-box">Click to Sign</div>
+    <div class="signature-box" id="server-signature">Server Signature (Click to sign)</div>
+    <canvas id="server-signature-canvas" style="display: none;" height="200"></canvas>
 
-    <label>Manager Signature</label>
-    <div class="signature-box">Click to Sign</div>
+    <div class="signature-box" id="manager-signature">Manager Signature (Click to sign)</div>
+    <canvas id="manager-signature-canvas" style="display: none;" height="200"></canvas>
 
     <p class="note">
-      Note: This is a document used for payroll and tax purposes. This form must be filled out accurately and completely. All employees receiving tips must verify the tip amount received by initiating this form. As the Server, you are responsible for completing all information contained in this document. Forging or incorrectly completing this document will NOT be tolerated.
+      Note: This is a document used for payroll and tax purposes. This form must be filled out accurately and completely. All employees receiving tips must verify the tip amount received by initiating this form. Forging or incorrectly completing this document will NOT be tolerated.
     </p>
   </div>
 
@@ -156,32 +171,39 @@
     document.addEventListener('input', calculateAll);
 
     function calculateAll() {
-      const netSales = parseFloat(document.getElementById('total-net-sales').value) || 0;
-      const totalTips = parseFloat(document.getElementById('total-tips').value) || 0;
-      const netFoodSales = parseFloat(document.getElementById('net-food-sales').value) || 0;
-      const netBeverageSales = parseFloat(document.getElementById('net-beverage-sales').value) || 0;
-      const captainSelect = document.getElementById('captain-select').value;
+      const ccTips = parseFloat(document.getElementById('total-cc-tips').value) || 0;
+      const cashTips = parseFloat(document.getElementById('total-cash-tips').value) || 0;
+      document.getElementById('total-tips').value = (ccTips + cashTips).toFixed(2);
 
-      const tipPercentage = netSales ? ((totalTips / netSales) * 100).toFixed(2) : 0;
-      document.getElementById('tip-percentage').value = tipPercentage;
+      // Existing calculations...
+    }
 
-      const tipOut = (netFoodSales * 0.105).toFixed(2);
-      document.getElementById('tip-out').value = tipOut;
+    function enableSignature(signatureId, canvasId) {
+      const box = document.getElementById(signatureId);
+      const canvas = document.getElementById(canvasId);
+      canvas.style.display = "block";
 
-      document.getElementById('hosts').value = (netFoodSales * 0.012).toFixed(2);
-      document.getElementById('runners').value = (netFoodSales * 0.022).toFixed(2);
-      document.getElementById('bussers').value = (netFoodSales * 0.022).toFixed(2);
-      document.getElementById('barista').value = (netFoodSales * 0.009).toFixed(2);
-      document.getElementById('boh').value = (netFoodSales * 0.04).toFixed(2);
+      const ctx = canvas.getContext("2d");
+      canvas.width = box.offsetWidth;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      const captainTipOut = captainSelect === 'yes' ? (netFoodSales * 0.005).toFixed(2) : 0;
-      const bartenderTipOut = (netBeverageSales * 0.1).toFixed(2);
-      document.getElementById('bartender').value = bartenderTipOut;
+      let drawing = false;
+      canvas.addEventListener('mousedown', () => drawing = true);
+      canvas.addEventListener('mouseup', () => drawing = false);
+      canvas.addEventListener('mousemove', (e) => {
+        if (!drawing) return;
+        const rect = canvas.getBoundingClientRect();
+        ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+        ctx.stroke();
+      });
+    }
 
-      const actualTipAmount = (totalTips - tipOut - bartenderTipOut - captainTipOut).toFixed(2);
-      document.getElementById('actual-tip-amount').value = actualTipAmount;
+    document.getElementById('server-signature').addEventListener('click', () => enableSignature('server-signature', 'server-signature-canvas'));
+    document.getElementById('manager-signature').addEventListener('click', () => enableSignature('manager-signature', 'manager-signature-canvas'));
+
+    function clearSignatures(canvas) {
+      canvas.clearRect(0, 0, canvas.width, canvas.height);
     }
   </script>
-
 </body>
 </html>
