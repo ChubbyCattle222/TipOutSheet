@@ -119,7 +119,41 @@
   <p class="note">Note: This is a document used for payroll and tax purposes...</p>
 
   <script>
-    // Your calculation functions here
+    // document.addEventListener('input', calculateAll);
+
+function calculateAll() {
+  const netSales = parseFloat(document.getElementById('total-net-sales').value) || 0;
+  const totalTips = parseFloat(document.getElementById('total-tips').value) || 0;
+  const netFoodSales = parseFloat(document.getElementById('net-food-sales').value) || 0;
+  const netBeverageSales = parseFloat(document.getElementById('net-beverage-sales').value) || 0;
+  const captainSelect = document.getElementById('captain-select').value;
+
+  // Tip Percentage from Net Sales
+  const tipPercentage = netSales ? ((totalTips / netSales) * 100).toFixed(2) : 0;
+  document.getElementById('tip-percentage').value = tipPercentage;
+
+  // Tip Out Calculations
+  const tipOut = (netFoodSales * 0.105).toFixed(2);
+  document.getElementById('tip-out').value = tipOut;
+
+  document.getElementById('hosts').value = (netFoodSales * 0.012).toFixed(2);
+  document.getElementById('runners').value = (netFoodSales * 0.022).toFixed(2);
+  document.getElementById('bussers').value = (netFoodSales * 0.022).toFixed(2);
+  document.getElementById('barista').value = (netFoodSales * 0.009).toFixed(2);
+  document.getElementById('boh').value = (netFoodSales * 0.04).toFixed(2);
+
+  // Captain Tip Out (conditional)
+  const captainTipOut = captainSelect === 'yes' ? (netFoodSales * 0.005).toFixed(2) : 0;
+
+  // Bartender Tip Out
+  const bartenderTipOut = (netBeverageSales * 0.1).toFixed(2);
+  document.getElementById('bartender').value = bartenderTipOut;
+
+  // Server Actual Tip Amount Calculation
+  const actualTipAmount = (totalTips - tipOut - bartenderTipOut - captainTipOut).toFixed(2);
+  document.getElementById('actual-tip-amount').value = actualTipAmount;
+}
+
   </script>
 
 </body>
