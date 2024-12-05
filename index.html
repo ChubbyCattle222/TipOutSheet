@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: 'Arial', sans-serif;
-      background: #f1f1f1;
+      background: #f9f9f9;
       color: #333;
       margin: 0;
       padding: 0;
@@ -18,13 +18,13 @@
       margin: 20px auto;
       background: #fff;
       padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
 
     h1 {
       text-align: center;
-      font-size: 24px;
+      font-size: 28px;
       color: #444;
       margin-bottom: 20px;
     }
@@ -37,49 +37,56 @@
 
     input[type="text"], input[type="number"], select {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       margin-bottom: 15px;
       border: 1px solid #ccc;
-      border-radius: 4px;
+      border-radius: 5px;
       font-size: 16px;
     }
 
     input[readonly] {
-      background-color: #e9ecef;
+      background-color: #f1f1f1;
     }
 
     .signature-box {
       border: 2px dashed #ccc;
-      height: 200px;
-      margin-bottom: 10px;
       background-color: #f9f9f9;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 200px;
+      border-radius: 5px;
       position: relative;
-      overflow: hidden;
-      touch-action: none;
+    }
+
+    .signature-box canvas {
+      display: block;
+      border-radius: 5px;
     }
 
     .note {
-      font-size: 12px;
+      font-size: 14px;
       color: #666;
       margin-top: 20px;
-    }
-
-    canvas {
-      width: 100%;
-      height: 100%;
-      display: block;
+      line-height: 1.6;
+      text-align: justify;
     }
 
     .clear-btn {
-      display: block;
+      display: inline-block;
       margin-top: 10px;
-      background-color: #ff6666;
+      background-color: #d9534f;
       color: white;
-      padding: 10px;
+      padding: 10px 20px;
       border: none;
       cursor: pointer;
-      text-align: center;
-      border-radius: 4px;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .clear-btn:hover {
+      background-color: #c9302c;
     }
 
     @media (max-width: 768px) {
@@ -89,7 +96,11 @@
       }
 
       h1 {
-        font-size: 20px;
+        font-size: 24px;
+      }
+
+      .clear-btn {
+        width: 100%;
       }
     }
   </style>
@@ -184,7 +195,7 @@
   <button class="clear-btn" onclick="clearCanvas('manager-signature-canvas')">Clear Signature</button>
 
   <p class="note">
-    Note: This is a document used for payroll and tax purposes, this form must be filled out accurately and completely. All employees receiving tips must verify the tip amount received by initiating this form. As the Server, you are responsible for completing all information contained in this document. This means you must obtain the names of all employees who worked and will receive tips in each department listed. Forging or incorrectly completing this document will NOT be tolerated. 
+    Note: This is a document used for payroll and tax purposes, this form must be filled out accurately and completely. Forging or incorrectly completing this document will NOT be tolerated.
   </p>
 </div>
 
@@ -228,13 +239,13 @@
 
     canvas.addEventListener('mousedown', (e) => {
       drawing = true;
-      context.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+      context.moveTo(e.offsetX, e.offsetY);
       context.beginPath();
     });
 
     canvas.addEventListener('mousemove', (e) => {
       if (drawing) {
-        context.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+        context.lineTo(e.offsetX, e.offsetY);
         context.stroke();
       }
     });
@@ -245,13 +256,15 @@
 
     canvas.addEventListener('touchstart', (e) => {
       drawing = true;
-      context.moveTo(e.touches[0].clientX - canvas.offsetLeft, e.touches[0].clientY - canvas.offsetTop);
+      const rect = canvas.getBoundingClientRect();
+      context.moveTo(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
       context.beginPath();
     });
 
     canvas.addEventListener('touchmove', (e) => {
       if (drawing) {
-        context.lineTo(e.touches[0].clientX - canvas.offsetLeft, e.touches[0].clientY - canvas.offsetTop);
+        const rect = canvas.getBoundingClientRect();
+        context.lineTo(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
         context.stroke();
       }
     });
