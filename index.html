@@ -26,6 +26,7 @@
       text-align: center;
       font-size: 28px;
       color: #444;
+      font-weight: bold;
       margin-bottom: 20px;
     }
 
@@ -57,14 +58,12 @@
       justify-content: center;
       height: 200px;
       border-radius: 5px;
-      position: relative;
       overflow: hidden;
     }
 
     .signature-box canvas {
       width: 100%;
       height: 100%;
-      border-radius: 5px;
       touch-action: none;
     }
 
@@ -148,6 +147,21 @@
   <label>Total Tip Out 10.5% of NET FOOD SALES</label>
   <input type="text" id="total-tip-out" readonly>
 
+  <label>Hosts 1.2%</label>
+  <input type="text" id="hosts-tip-out" readonly>
+
+  <label>Runners 2.2%</label>
+  <input type="text" id="runners-tip-out" readonly>
+
+  <label>Bussers 2.2%</label>
+  <input type="text" id="bussers-tip-out" readonly>
+
+  <label>Barista 0.9%</label>
+  <input type="text" id="barista-tip-out" readonly>
+
+  <label>BOH 4%</label>
+  <input type="text" id="boh-tip-out" readonly>
+
   <label>Total Tip Out 0.5% to Captain</label>
   <select id="captain-tip-out" onchange="updateCalculations()">
     <option value="No">No</option>
@@ -156,6 +170,19 @@
 
   <label>Captain Tip Out</label>
   <input type="text" id="captain-tip-out-amount" readonly>
+
+  <label>Captain's Name</label>
+  <input type="text" id="captains-name">
+
+  <label>NET BEVERAGE SALES</label>
+  <input type="number" id="net-beverage-sales" oninput="updateCalculations()">
+
+  <label>Bartender 10% of Net Beverage Sales</label>
+  <input type="text" id="bartender-tip-out" readonly>
+
+  <label>Server Actual Tip Amount</label>
+  <input type="text" id="server-actual-tip-amount" readonly>
+  <small>(Total Tips - Net Food & Net Beverage Tip Out)</small>
 
   <!-- Signature Areas -->
   <label>Server Signature (Tap to sign)</label>
@@ -192,11 +219,19 @@
       tipPercentage: document.getElementById('tip-percentage').value,
       netFoodSales: parseFloat(document.getElementById('net-food-sales').value) || 0,
       totalTipOut: parseFloat(document.getElementById('total-tip-out').value) || 0,
+      hostsTipOut: parseFloat(document.getElementById('hosts-tip-out').value) || 0,
+      runnersTipOut: parseFloat(document.getElementById('runners-tip-out').value) || 0,
+      bussersTipOut: parseFloat(document.getElementById('bussers-tip-out').value) || 0,
+      baristaTipOut: parseFloat(document.getElementById('barista-tip-out').value) || 0,
+      bohTipOut: parseFloat(document.getElementById('boh-tip-out').value) || 0,
+      netBeverageSales: parseFloat(document.getElementById('net-beverage-sales').value) || 0,
+      bartenderTipOut: parseFloat(document.getElementById('bartender-tip-out').value) || 0,
+      serverActualTipAmount: parseFloat(document.getElementById('server-actual-tip-amount').value) || 0,
       captainTipOut: parseFloat(document.getElementById('captain-tip-out-amount').value) || 0,
     };
 
     try {
-      const response = await fetch('YOUR_GOOGLE_APPS_SCRIPT_URL', {
+      const response = await fetch('https://script.google.com/macros/s/AKfycbyCF9A64wzuX5AcePPv47NpJLplHmyt0fDDYwBk-WiVTYnaKHPu-1wEyI8SBKPIv4QP/exec', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -224,8 +259,22 @@
     const netFoodSales = parseFloat(document.getElementById('net-food-sales').value) || 0;
     document.getElementById('total-tip-out').value = (netFoodSales * 0.105).toFixed(2);
 
+    document.getElementById('hosts-tip-out').value = (netFoodSales * 0.012).toFixed(2);
+    document.getElementById('runners-tip-out').value = (netFoodSales * 0.022).toFixed(2);
+    document.getElementById('bussers-tip-out').value = (netFoodSales * 0.022).toFixed(2);
+    document.getElementById('barista-tip-out').value = (netFoodSales * 0.009).toFixed(2);
+    document.getElementById('boh-tip-out').value = (netFoodSales * 0.04).toFixed(2);
+
     const captainChoice = document.getElementById('captain-tip-out').value;
     document.getElementById('captain-tip-out-amount').value = captainChoice === 'Yes' ? (netFoodSales * 0.005).toFixed(2) : '0.00';
+
+    const netBeverageSales = parseFloat(document.getElementById('net-beverage-sales').value) || 0;
+    document.getElementById('bartender-tip-out').value = (netBeverageSales * 0.1).toFixed(2);
+
+    const serverActualTipAmount = totalTips
+      - parseFloat(document.getElementById('total-tip-out').value || 0)
+      - parseFloat(document.getElementById('bartender-tip-out').value || 0);
+    document.getElementById('server-actual-tip-amount').value = serverActualTipAmount.toFixed(2);
   }
 
   function initSignatureCanvas(canvasId) {
