@@ -100,8 +100,8 @@
   <h1>Chubby Cattle Tip Out</h1>
 
   <!-- Form Fields -->
-  <label>Date (xx/xx/xxxx)</label>
-  <input type="text" id="date">
+  <label>Date (##/##/####)</label>
+  <input type="text" id="date" placeholder="MM/DD/YYYY">
 
   <label>Server Name</label>
   <input type="text" id="server-name">
@@ -189,71 +189,39 @@
 </div>
 
 <script>
+  function calculateTotalTips() {
+    const ccTips = parseFloat(document.getElementById('total-cc-tips').value) || 0;
+    const cashTips = parseFloat(document.getElementById('total-cash-tips').value) || 0;
+    document.getElementById('total-tips').value = (ccTips + cashTips).toFixed(2);
+    calculateTipPercentage();
+  }
+
+  function calculateTipPercentage() {
+    const netSales = parseFloat(document.getElementById('total-net-sales').value) || 0;
+    const totalTips = parseFloat(document.getElementById('total-tips').value) || 0;
+    document.getElementById('tip-percentage').value = netSales ? ((totalTips / netSales) * 100).toFixed(2) + '%' : '0%';
+  }
+
+  function calculateFoodTipOuts() {
+    const netFoodSales = parseFloat(document.getElementById('net-food-sales').value) || 0;
+    document.getElementById('total-tip-out').value = (netFoodSales * 0.105).toFixed(2);
+    document.getElementById('hosts-tip-out').value = (netFoodSales * 0.012).toFixed(2);
+    document.getElementById('runners-tip-out').value = (netFoodSales * 0.022).toFixed(2);
+    document.getElementById('bussers-tip-out').value = (netFoodSales * 0.022).toFixed(2);
+    document.getElementById('barista-tip-out').value = (netFoodSales * 0.009).toFixed(2);
+    document.getElementById('boh-tip-out').value = (netFoodSales * 0.04).toFixed(2);
+  }
+
+  function calculateCaptainTipOut() {
+    const captainChoice = document.getElementById('captain-tip-out').value;
+    const netFoodSales = parseFloat(document.getElementById('net-food-sales').value) || 0;
+    document.getElementById('captain-tip-out-amount').value = captainChoice === 'Yes' ? (netFoodSales * 0.005).toFixed(2) : '0.00';
+  }
+
+  function calculateBartenderTipOut() {
+    const netBeverageSales = parseFloat(document.getElementById('net-beverage-sales').value) || 0;
+    document.getElementById('bartender-tip-out').value = (netBeverageSales * 0.10).toFixed(2);
+  }
+
   function initSignatureCanvas(canvasId) {
-    const canvas = document.getElementById(canvasId);
-    const ctx = canvas.getContext('2d');
-    resizeCanvas(canvas);
-
-    let drawing = false;
-
-    function resizeCanvas(canvas) {
-      const rect = canvas.parentElement.getBoundingClientRect();
-      canvas.width = rect.width;
-      canvas.height = rect.height;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-
-    function startDrawing(e) {
-      e.preventDefault();
-      drawing = true;
-      ctx.beginPath();
-      ctx.moveTo(getX(e), getY(e));
-    }
-
-    function draw(e) {
-      if (!drawing) return;
-      ctx.lineTo(getX(e), getY(e));
-      ctx.strokeStyle = "#000";
-      ctx.lineWidth = 2;
-      ctx.stroke();
-    }
-
-    function stopDrawing() {
-      drawing = false;
-    }
-
-    function getX(e) {
-      return e.touches ? e.touches[0].clientX - canvas.getBoundingClientRect().left : e.offsetX;
-    }
-
-    function getY(e) {
-      return e.touches ? e.touches[0].clientY - canvas.getBoundingClientRect().top : e.offsetY;
-    }
-
-    canvas.addEventListener('mousedown', startDrawing);
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('mouseup', stopDrawing);
-    canvas.addEventListener('mouseleave', stopDrawing);
-
-    // Touch events for mobile
-    canvas.addEventListener('touchstart', startDrawing, false);
-    canvas.addEventListener('touchmove', draw, false);
-    canvas.addEventListener('touchend', stopDrawing, false);
-    canvas.addEventListener('touchcancel', stopDrawing, false);
-
-    window.addEventListener('resize', () => resizeCanvas(canvas));
-  }
-
-  function clearCanvas(canvasId) {
-    const canvas = document.getElementById(canvasId);
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  }
-
-  // Initialize signature canvases
-  initSignatureCanvas('server-signature-canvas');
-  initSignatureCanvas('manager-signature-canvas');
-</script>
-
-</body>
-</html>
+    const canvas = document.getElementBy
