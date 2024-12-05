@@ -231,7 +231,7 @@
     };
 
     try {
-      const response = await fetch('https://script.google.com/macros/s/AKfycbznbtcZTD07lK1KvTJRpOvsAXS5F_dVVMVCHOJC9WW67-xuqWwYlDwXtId30sWXNqSU/exec', {
+      const response = await fetch('YOUR_GOOGLE_APPS_SCRIPT_URL', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -244,6 +244,7 @@
       }
     } catch (error) {
       console.error('Error submitting form:', error);
+      alert('There was an error submitting the form. Please check your internet connection and try again.');
     }
   }
 
@@ -335,3 +336,4 @@
 </script>
 </body>
 </html>
+
