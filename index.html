@@ -64,6 +64,7 @@
     .signature-box canvas {
       display: block;
       border-radius: 5px;
+      touch-action: none;
     }
 
     .note {
@@ -74,10 +75,10 @@
       text-align: justify;
     }
 
-    .clear-btn {
+    .clear-btn, .save-btn {
       display: inline-block;
       margin-top: 10px;
-      background-color: #d9534f;
+      background-color: #5cb85c;
       color: white;
       padding: 10px 20px;
       border: none;
@@ -87,8 +88,25 @@
       text-align: center;
     }
 
-    .clear-btn:hover {
-      background-color: #c9302c;
+    .clear-btn:hover, .save-btn:hover {
+      background-color: #4cae4c;
+    }
+
+    .email-btn {
+      display: inline-block;
+      margin-top: 10px;
+      background-color: #0275d8;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .email-btn:hover {
+      background-color: #025aa5;
     }
 
     @media (max-width: 768px) {
@@ -101,7 +119,7 @@
         font-size: 24px;
       }
 
-      .clear-btn {
+      .clear-btn, .save-btn, .email-btn {
         width: 100%;
       }
     }
@@ -109,7 +127,7 @@
 </head>
 <body>
 
-<div class="container">
+<div class="container" id="form-container">
   <h1>Chubby Cattle Tip Out</h1>
 
   <!-- Form Fields -->
@@ -196,8 +214,12 @@
   </div>
   <button class="clear-btn" onclick="clearCanvas('manager-signature-canvas')">Clear Signature</button>
 
+  <!-- Buttons -->
+  <button class="save-btn" onclick="saveAsImage()">Save as Image</button>
+  <button class="email-btn" onclick="sendAsEmail()">Send via Email</button>
+
   <p class="note">
-    Note: This is a document used for payroll and tax purposes, this form must be filled out accurately and completely. Forging or incorrectly completing this document will NOT be tolerated.
+    Note: This is a document used for payroll and tax purposes, this form must be filled out accurately and completely. All employees receiving tips must verify the tip amount received by initiating this form. As the Server, you are responsible for completing all information contained in this document. This means you must obtain the names of all employees who worked and will receive tips in each department listed. Forging or incorrectly completing this document will NOT be tolerated.
   </p>
 </div>
 
@@ -282,11 +304,26 @@
     context.clearRect(0, 0, canvas.width, canvas.height);
   }
 
-  // Initialize signature canvases
+  function saveAsImage() {
+    const container = document.getElementById('form-container');
+    html2canvas(container).then((canvas) => {
+      const link = document.createElement('a');
+      link.download = 'Chubby_Cattle_Tip_Out.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+  }
+
+  function sendAsEmail() {
+    const emailBody = `Please find the completed form attached.`;
+    window.location.href = `mailto:?subject=Chubby Cattle Tip Out&body=${encodeURIComponent(emailBody)}`;
+  }
+
   window.onload = function() {
     initSignatureCanvas('server-signature-canvas');
     initSignatureCanvas('manager-signature-canvas');
   };
 </script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </body>
 </html>
