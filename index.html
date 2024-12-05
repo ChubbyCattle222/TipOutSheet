@@ -58,10 +58,12 @@
       height: 200px;
       border-radius: 5px;
       position: relative;
+      overflow: hidden;
     }
 
     .signature-box canvas {
-      display: block;
+      width: 100%;
+      height: 100%;
       border-radius: 5px;
       touch-action: none;
     }
@@ -74,7 +76,7 @@
       text-align: justify;
     }
 
-    .clear-btn, .save-btn, .email-btn {
+    .clear-btn, .save-btn {
       display: inline-block;
       margin-top: 10px;
       background-color: #5cb85c;
@@ -87,7 +89,7 @@
       text-align: center;
     }
 
-    .clear-btn:hover, .save-btn:hover, .email-btn:hover {
+    .clear-btn:hover, .save-btn:hover {
       background-color: #4cae4c;
     }
 
@@ -101,7 +103,7 @@
         font-size: 24px;
       }
 
-      .clear-btn, .save-btn, .email-btn {
+      .clear-btn, .save-btn {
         width: 100%;
       }
     }
@@ -152,6 +154,10 @@
     <option value="Yes">Yes</option>
   </select>
 
+  <label>Captain Tip Out</label>
+  <input type="text" id="captain-tip-out-amount" readonly>
+
+  <!-- Signature Areas -->
   <label>Server Signature (Tap to sign)</label>
   <div class="signature-box">
     <canvas id="server-signature-canvas"></canvas>
@@ -164,7 +170,7 @@
   </div>
   <button class="clear-btn" onclick="clearCanvas('manager-signature-canvas')">Clear Signature</button>
 
-  <!-- Save and Email Buttons -->
+  <!-- Submit Button -->
   <button class="save-btn" onclick="submitForm()">Submit Form</button>
 
   <p class="note">
@@ -190,7 +196,7 @@
     };
 
     try {
-      const response = await fetch('https://script.google.com/macros/s/AKfycbznbtcZTD07lK1KvTJRpOvsAXS5F_dVVMVCHOJC9WW67-xuqWwYlDwXtId30sWXNqSU/exec', {
+      const response = await fetch('YOUR_GOOGLE_APPS_SCRIPT_URL', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -265,4 +271,18 @@
     canvas.addEventListener('touchend', () => {
       drawing = false;
     });
- 
+  }
+
+  function clearCanvas(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    const context = canvas.getContext('2d');
+    context.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  window.onload = function() {
+    initSignatureCanvas('server-signature-canvas');
+    initSignatureCanvas('manager-signature-canvas');
+  };
+</script>
+</body>
+</html>
