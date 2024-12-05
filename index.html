@@ -1,1 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chubby Cattle Tip Out</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h1 {
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      font-weight: bold;
+    }
+    input[type="text"], input[type="number"], select {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+    }
+    .box {
+      margin-bottom: 20px;
+    }
+    .note {
+      font-size: 12px;
+      color: gray;
+    }
+    .italic {
+      font-style: italic;
+      font-size: 12px;
+      color: gray;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Chubby Cattle Tip Out</h1>
+
+  <div class="box">
+    <label for="date">Date (xx/xx/xxxx)</label>
+    <input type="text" id="date" placeholder="Enter date">
+    
+    <label for="server-name">Server Name</label>
+    <input type="text" id="server-name" placeholder="Enter server name">
+
+    <label for="section">Section</label>
+    <input type="text" id="section" placeholder="Enter section">
+
+    <label for="total-guests">Total Guests #</label>
+    <input type="number" id="total-guests" placeholder="Enter total guests">
+
+    <label for="total-net-sales">Total Net Sales</label>
+    <input type="number" id="total-net-sales" placeholder="Enter total net sales">
+
+    <label for="total-cc-tips">Total CC Tips</label>
+    <input type="number" id="total-cc-tips" placeholder="Enter total CC tips">
+
+    <label for="total-cash-tips">Total Cash Tips</label>
+    <input type="number" id="total-cash-tips" placeholder="Enter total cash tips">
+
+    <label for="total-tips">Total Tips</label>
+    <input type="number" id="total-tips" placeholder="Enter total tips">
+
+    <label for="tip-percentage">Tip Percentage from Net Sales</label>
+    <input type="number" id="tip-percentage" readonly>
+
+    <label for="net-food-sales">NET FOOD SALES</label>
+    <input type="number" id="net-food-sales" placeholder="Enter net food sales">
+
+    <label for="tip-out">Total Tip Out (10.5% of NET FOOD SALES)</label>
+    <input type="number" id="tip-out" readonly>
+
+    <label for="hosts">Hosts (1.2%)</label>
+    <input type="number" id="hosts" readonly>
+
+    <label for="runners">Runners (2.2%)</label>
+    <input type="number" id="runners" readonly>
+
+    <label for="bussers">Bussers (2.2%)</label>
+    <input type="number" id="bussers" readonly>
+
+    <label for="barista">Barista (0.9%)</label>
+    <input type="number" id="barista" readonly>
+
+    <label for="boh">BOH (4%)</label>
+    <input type="number" id="boh" readonly>
+
+    <label for="captain-select">Total Tip Out 0.5% to Captain</label>
+    <select id="captain-select">
+      <option value="no">No</option>
+      <option value="yes">Yes</option>
+    </select>
+
+    <label for="captain-name">Captain's Name</label>
+    <input type="text" id="captain-name" placeholder="Enter captain's name">
+
+    <label for="net-beverage-sales">NET BEVERAGE SALES</label>
+    <input type="number" id="net-beverage-sales" placeholder="Enter net beverage sales">
+
+    <label for="bartender">Bartender (10% of Net Beverage Sales)</label>
+    <input type="number" id="bartender" readonly>
+
+    <label for="actual-tip-amount">Server Actual Tip Amount <span class="italic">(Total Tips - Net Food & Net Beverage Tip Out)</span></label>
+    <input type="number" id="actual-tip-amount" readonly>
+
+    <label for="server-signature">Server Signature</label>
+    <input type="text" id="server-signature" placeholder="Sign here">
+
+    <label for="manager-signature">Manager Signature</label>
+    <input type="text" id="manager-signature" placeholder="Sign here">
+  </div>
+
+  <p class="note">Note: This is a document used for payroll and tax purposes...</p>
+
+  <script>
+    // Your calculation functions here
+  </script>
+
+</body>
+</html>
 
