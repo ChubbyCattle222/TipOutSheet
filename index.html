@@ -113,13 +113,13 @@
   <input type="number" id="total-guests">
 
   <label>Total Net Sales</label>
-  <input type="number" id="total-net-sales" oninput="calculateTipPercentage()">
+  <input type="number" id="total-net-sales" oninput="updateCalculations()">
 
   <label>Total CC Tips</label>
-  <input type="number" id="total-cc-tips" oninput="calculateTotalTips()">
+  <input type="number" id="total-cc-tips" oninput="updateCalculations()">
 
   <label>Total Cash Tips</label>
-  <input type="number" id="total-cash-tips" oninput="calculateTotalTips()">
+  <input type="number" id="total-cash-tips" oninput="updateCalculations()">
 
   <label>Total Tips</label>
   <input type="number" id="total-tips" readonly>
@@ -128,7 +128,7 @@
   <input type="text" id="tip-percentage" readonly>
 
   <label>NET FOOD SALES</label>
-  <input type="number" id="net-food-sales" oninput="calculateFoodTipOuts()">
+  <input type="number" id="net-food-sales" oninput="updateCalculations()">
 
   <label>Total Tip Out 10.5% of NET FOOD SALES</label>
   <input type="text" id="total-tip-out" readonly>
@@ -149,7 +149,7 @@
   <input type="text" id="boh-tip-out" readonly>
 
   <label>Total Tip Out 0.5% to Captain</label>
-  <select id="captain-tip-out" onchange="calculateCaptainTipOut()">
+  <select id="captain-tip-out" onchange="updateCalculations()">
     <option value="No">No</option>
     <option value="Yes">Yes</option>
   </select>
@@ -161,7 +161,7 @@
   <input type="text" id="captains-name">
 
   <label>NET BEVERAGE SALES</label>
-  <input type="number" id="net-beverage-sales" oninput="calculateBartenderTipOut()">
+  <input type="number" id="net-beverage-sales" oninput="updateCalculations()">
 
   <label>Bartender 10% of Net Beverage Sales</label>
   <input type="text" id="bartender-tip-out" readonly>
@@ -189,20 +189,15 @@
 </div>
 
 <script>
-  function calculateTotalTips() {
+  function updateCalculations() {
     const ccTips = parseFloat(document.getElementById('total-cc-tips').value) || 0;
     const cashTips = parseFloat(document.getElementById('total-cash-tips').value) || 0;
-    document.getElementById('total-tips').value = (ccTips + cashTips).toFixed(2);
-    calculateTipPercentage();
-  }
+    const totalTips = ccTips + cashTips;
+    document.getElementById('total-tips').value = totalTips.toFixed(2);
 
-  function calculateTipPercentage() {
     const netSales = parseFloat(document.getElementById('total-net-sales').value) || 0;
-    const totalTips = parseFloat(document.getElementById('total-tips').value) || 0;
     document.getElementById('tip-percentage').value = netSales ? ((totalTips / netSales) * 100).toFixed(2) + '%' : '0%';
-  }
 
-  function calculateFoodTipOuts() {
     const netFoodSales = parseFloat(document.getElementById('net-food-sales').value) || 0;
     document.getElementById('total-tip-out').value = (netFoodSales * 0.105).toFixed(2);
     document.getElementById('hosts-tip-out').value = (netFoodSales * 0.012).toFixed(2);
@@ -210,18 +205,73 @@
     document.getElementById('bussers-tip-out').value = (netFoodSales * 0.022).toFixed(2);
     document.getElementById('barista-tip-out').value = (netFoodSales * 0.009).toFixed(2);
     document.getElementById('boh-tip-out').value = (netFoodSales * 0.04).toFixed(2);
-  }
 
-  function calculateCaptainTipOut() {
     const captainChoice = document.getElementById('captain-tip-out').value;
-    const netFoodSales = parseFloat(document.getElementById('net-food-sales').value) || 0;
     document.getElementById('captain-tip-out-amount').value = captainChoice === 'Yes' ? (netFoodSales * 0.005).toFixed(2) : '0.00';
-  }
 
-  function calculateBartenderTipOut() {
     const netBeverageSales = parseFloat(document.getElementById('net-beverage-sales').value) || 0;
     document.getElementById('bartender-tip-out').value = (netBeverageSales * 0.10).toFixed(2);
+
+    const foodTipOut = parseFloat(document.getElementById('total-tip-out').value) || 0;
+    const bartenderTipOut = parseFloat(document.getElementById('bartender-tip-out').value) || 0;
+    const captainTipOut = parseFloat(document.getElementById('captain-tip-out-amount').value) || 0;
+    document.getElementById('server-actual-tip-amount').value = (totalTips - foodTipOut - bartenderTipOut - captainTipOut).toFixed(2);
   }
 
   function initSignatureCanvas(canvasId) {
-    const canvas = document.getElementBy
+    const canvas = document.getElementById(canvasId);
+    const context = canvas.getContext('2d');
+    let drawing = false;
+
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+
+    canvas.addEventListener('mousedown', (e) => {
+      drawing = true;
+      context.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+      context.beginPath();
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+      if (drawing) {
+        context.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+        context.stroke();
+      }
+    });
+
+    canvas.addEventListener('mouseup', () => {
+      drawing = false;
+    });
+
+    canvas.addEventListener('touchstart', (e) => {
+      drawing = true;
+      context.moveTo(e.touches[0].clientX - canvas.offsetLeft, e.touches[0].clientY - canvas.offsetTop);
+      context.beginPath();
+    });
+
+    canvas.addEventListener('touchmove', (e) => {
+      if (drawing) {
+        context.lineTo(e.touches[0].clientX - canvas.offsetLeft, e.touches[0].clientY - canvas.offsetTop);
+        context.stroke();
+      }
+    });
+
+    canvas.addEventListener('touchend', () => {
+      drawing = false;
+    });
+  }
+
+  function clearCanvas(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    const context = canvas.getContext('2d');
+    context.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  // Initialize signature canvases
+  window.onload = function() {
+    initSignatureCanvas('server-signature-canvas');
+    initSignatureCanvas('manager-signature-canvas');
+  };
+</script>
+</body>
+</html>
