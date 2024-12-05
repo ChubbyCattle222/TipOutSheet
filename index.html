@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chubby Cattle Tip Out</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOM4rMB8Nf8y3e4eId/luy04UX2xtzo36tsb6rm" crossorigin="anonymous">
   <style>
     body {
       font-family: 'Arial', sans-serif;
@@ -51,12 +50,11 @@
 
     .signature-box {
       border: 1px dashed #ccc;
-      padding: 20px;
-      text-align: center;
-      background-color: #f9f9f9;
+      height: 200px;
       margin-bottom: 20px;
       position: relative;
       cursor: pointer;
+      background-color: #f9f9f9;
     }
 
     .note {
@@ -71,11 +69,24 @@
       border-radius: 5px;
     }
 
+    .clear-btn {
+      display: block;
+      margin-top: 10px;
+      text-align: center;
+      background-color: #ff6666;
+      color: white;
+      padding: 10px;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
     @media (max-width: 768px) {
       .container {
         margin: 10px;
         padding: 15px;
       }
+
       h1 {
         font-size: 20px;
       }
@@ -84,126 +95,93 @@
 </head>
 <body>
 
-  <div class="container">
-    <h1>Chubby Cattle Tip Out</h1>
+<div class="container">
+  <h1>Chubby Cattle Tip Out</h1>
 
-    <label for="date">Date (xx/xx/xxxx)</label>
-    <input type="text" id="date" placeholder="Enter date">
+  <!-- Form fields -->
 
-    <label for="server-name">Server Name</label>
-    <input type="text" id="server-name" placeholder="Enter server name">
-
-    <label for="section">Section</label>
-    <input type="text" id="section" placeholder="Enter section">
-
-    <label for="total-guests">Total Guests #</label>
-    <input type="number" id="total-guests" placeholder="Enter total guests">
-
-    <label for="total-net-sales">Total Net Sales</label>
-    <input type="number" id="total-net-sales" placeholder="Enter total net sales">
-
-    <label for="total-cc-tips">Total CC Tips</label>
-    <input type="number" id="total-cc-tips" placeholder="Enter total CC tips">
-
-    <label for="total-cash-tips">Total Cash Tips</label>
-    <input type="number" id="total-cash-tips" placeholder="Enter total cash tips">
-
-    <label for="total-tips">Total Tips</label>
-    <input type="number" id="total-tips" readonly>
-
-    <label for="tip-percentage">Tip Percentage from Net Sales</label>
-    <input type="number" id="tip-percentage" readonly>
-
-    <label for="net-food-sales">NET FOOD SALES</label>
-    <input type="number" id="net-food-sales" placeholder="Enter net food sales">
-
-    <label for="tip-out">Total Tip Out (10.5% of NET FOOD SALES)</label>
-    <input type="number" id="tip-out" readonly>
-
-    <label for="hosts">Hosts (1.2%)</label>
-    <input type="number" id="hosts" readonly>
-
-    <label for="runners">Runners (2.2%)</label>
-    <input type="number" id="runners" readonly>
-
-    <label for="bussers">Bussers (2.2%)</label>
-    <input type="number" id="bussers" readonly>
-
-    <label for="barista">Barista (0.9%)</label>
-    <input type="number" id="barista" readonly>
-
-    <label for="boh">BOH (4%)</label>
-    <input type="number" id="boh" readonly>
-
-    <label for="captain-select">Total Tip Out 0.5% to Captain</label>
-    <select id="captain-select">
-      <option value="no">No</option>
-      <option value="yes">Yes</option>
-    </select>
-
-    <label for="captain-tip-out">Captain Tip Out</label>
-    <input type="number" id="captain-tip-out" readonly>
-
-    <label for="captain-name">Captain's Name</label>
-    <input type="text" id="captain-name" placeholder="Enter captain's name">
-
-    <label for="net-beverage-sales">NET BEVERAGE SALES</label>
-    <input type="number" id="net-beverage-sales" placeholder="Enter net beverage sales">
-
-    <label for="bartender">Bartender (10% of Net Beverage Sales)</label>
-    <input type="number" id="bartender" readonly>
-
-    <label for="actual-tip-amount">Server Actual Tip Amount</label>
-    <input type="number" id="actual-tip-amount" readonly>
-
-    <div class="signature-box" id="server-signature">Server Signature (Click to sign)</div>
-    <canvas id="server-signature-canvas" style="display: none;" height="200"></canvas>
-
-    <div class="signature-box" id="manager-signature">Manager Signature (Click to sign)</div>
-    <canvas id="manager-signature-canvas" style="display: none;" height="200"></canvas>
-
-    <p class="note">
-      Note: This is a document used for payroll and tax purposes. This form must be filled out accurately and completely. All employees receiving tips must verify the tip amount received by initiating this form. Forging or incorrectly completing this document will NOT be tolerated.
-    </p>
+  <label>Server Signature (Tap to sign)</label>
+  <div class="signature-box">
+    <canvas id="server-signature-canvas"></canvas>
   </div>
+  <button class="clear-btn" onclick="clearCanvas('server-signature-canvas')">Clear Signature</button>
 
-  <script>
-    document.addEventListener('input', calculateAll);
+  <label>Manager Signature (Tap to sign)</label>
+  <div class="signature-box">
+    <canvas id="manager-signature-canvas"></canvas>
+  </div>
+  <button class="clear-btn" onclick="clearCanvas('manager-signature-canvas')">Clear Signature</button>
 
-    function calculateAll() {
-      const ccTips = parseFloat(document.getElementById('total-cc-tips').value) || 0;
-      const cashTips = parseFloat(document.getElementById('total-cash-tips').value) || 0;
-      document.getElementById('total-tips').value = (ccTips + cashTips).toFixed(2);
+  <p class="note">
+    Note: This is a document used for payroll and tax purposes. This form must be filled out accurately and completely. Forging or incorrectly completing this document will NOT be tolerated.
+  </p>
+</div>
 
-      // Existing calculations...
-    }
+<script>
+  function initSignatureCanvas(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    const ctx = canvas.getContext('2d');
+    resizeCanvas(canvas);
 
-    function enableSignature(signatureId, canvasId) {
-      const box = document.getElementById(signatureId);
-      const canvas = document.getElementById(canvasId);
-      canvas.style.display = "block";
+    let drawing = false;
 
-      const ctx = canvas.getContext("2d");
-      canvas.width = box.offsetWidth;
+    function resizeCanvas(canvas) {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      let drawing = false;
-      canvas.addEventListener('mousedown', () => drawing = true);
-      canvas.addEventListener('mouseup', () => drawing = false);
-      canvas.addEventListener('mousemove', (e) => {
-        if (!drawing) return;
-        const rect = canvas.getBoundingClientRect();
-        ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
-        ctx.stroke();
-      });
     }
 
-    document.getElementById('server-signature').addEventListener('click', () => enableSignature('server-signature', 'server-signature-canvas'));
-    document.getElementById('manager-signature').addEventListener('click', () => enableSignature('manager-signature', 'manager-signature-canvas'));
-
-    function clearSignatures(canvas) {
-      canvas.clearRect(0, 0, canvas.width, canvas.height);
+    function startDrawing(e) {
+      drawing = true;
+      ctx.beginPath();
+      ctx.moveTo(getX(e), getY(e));
     }
-  </script>
+
+    function draw(e) {
+      if (!drawing) return;
+      ctx.lineTo(getX(e), getY(e));
+      ctx.strokeStyle = "#000";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    function stopDrawing() {
+      drawing = false;
+    }
+
+    function getX(e) {
+      return e.touches ? e.touches[0].clientX - canvas.getBoundingClientRect().left : e.offsetX;
+    }
+
+    function getY(e) {
+      return e.touches ? e.touches[0].clientY - canvas.getBoundingClientRect().top : e.offsetY;
+    }
+
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseleave', stopDrawing);
+
+    // Touch events for mobile
+    canvas.addEventListener('touchstart', startDrawing, false);
+    canvas.addEventListener('touchmove', draw, false);
+    canvas.addEventListener('touchend', stopDrawing, false);
+    canvas.addEventListener('touchcancel', stopDrawing, false);
+
+    window.addEventListener('resize', () => resizeCanvas(canvas));
+  }
+
+  function clearCanvas(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  // Initialize canvases for signatures
+  initSignatureCanvas('server-signature-canvas');
+  initSignatureCanvas('manager-signature-canvas');
+</script>
+
 </body>
 </html>
