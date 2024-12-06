@@ -175,7 +175,8 @@
   <input type="text" id="captains-name">
 
   <label>NET BEVERAGE SALES</label>
-  <input type="number" id="net-beverage-sales" oninput="updateCalculations()">
+  <!-- Changed to readonly since it's now automatically calculated -->
+  <input type="number" id="net-beverage-sales" oninput="updateCalculations()" readonly>
 
   <label>Bartender 10% of Net Beverage Sales</label>
   <input type="text" id="bartender-tip-out" readonly>
@@ -224,6 +225,7 @@
       bussersTipOut: parseFloat(document.getElementById('bussers-tip-out').value) || 0,
       baristaTipOut: parseFloat(document.getElementById('barista-tip-out').value) || 0,
       bohTipOut: parseFloat(document.getElementById('boh-tip-out').value) || 0,
+      // netBeverageSales is now computed below in updateCalculations
       netBeverageSales: parseFloat(document.getElementById('net-beverage-sales').value) || 0,
       bartenderTipOut: parseFloat(document.getElementById('bartender-tip-out').value) || 0,
       serverActualTipAmount: parseFloat(document.getElementById('server-actual-tip-amount').value) || 0,
@@ -254,7 +256,8 @@
     const totalTips = ccTips + cashTips;
     document.getElementById('total-tips').value = totalTips.toFixed(2);
 
-    const netSales = parseFloat(document.getElementById('total-net-sales').value) || 0;
+    const totalNetSales = parseFloat(document.getElementById('total-net-sales').value) || 0;
+    const netSales = totalNetSales; // Just for clarity
     document.getElementById('tip-percentage').value = netSales ? ((totalTips / netSales) * 100).toFixed(2) + '%' : '0%';
 
     const netFoodSales = parseFloat(document.getElementById('net-food-sales').value) || 0;
@@ -269,7 +272,10 @@
     const captainChoice = document.getElementById('captain-tip-out').value;
     document.getElementById('captain-tip-out-amount').value = captainChoice === 'Yes' ? (netFoodSales * 0.005).toFixed(2) : '0.00';
 
-    const netBeverageSales = parseFloat(document.getElementById('net-beverage-sales').value) || 0;
+    // Compute NET BEVERAGE SALES automatically
+    const netBeverageSales = totalNetSales - netFoodSales;
+    document.getElementById('net-beverage-sales').value = netBeverageSales.toFixed(2);
+
     document.getElementById('bartender-tip-out').value = (netBeverageSales * 0.1).toFixed(2);
 
     const serverActualTipAmount = totalTips
